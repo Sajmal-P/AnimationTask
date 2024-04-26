@@ -14,6 +14,7 @@ import {
   FlatList,
   Image,
   ImageBackground,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -26,8 +27,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Octicons from 'react-native-vector-icons/Octicons';
 
 const App = () => {
-
-  const dataset = [{ img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }]
+  const dataset = [{ img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Emily', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'John Doe', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Alexander', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Waren Buffet', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'John Abraham', desc: 'Responsable de marque' }, { img: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800', name: 'Marcus Waren', desc: 'Responsable de marque' }]
 
   const [selected, setSelected] = useState(true);
   const scale1 = useSharedValue(0);
@@ -103,6 +103,13 @@ const App = () => {
       </View>
     )
   }
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const changeView = ({nativeEvent}) => {
+    const slide =
+      nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width;
+      setSelectedIndex(Math.round(slide));
+  };
   return (
     <View style={{ flex: 1, backgroundColor: '#262626' }}>
       <LinearGradient colors={['#000d1a', '#000d1a', '#000d1a', '#000d1a', '#000d1a', '#000d1a', '#000d1a']} style={{
@@ -153,36 +160,53 @@ const App = () => {
             </Text>
             <FlatList showsVerticalScrollIndicator={false} renderItem={renderItem} numColumns={2} data={dataset} style={{ flexGrow: 1, marginLeft: 10 }} />
           </Animated.View>
-         <Animated.View entering={FadeInDown} style={[animatedStyle, { flex: 1, alignItems: 'center', justifyContent: 'center', zIndex: !selected ? 10 : -10, position: 'absolute', top: 2 }]}>
+         <Animated.View entering={FadeInDown} style={[animatedStyle, {width: '100%', flex: 1, zIndex: !selected ? 10 : -10, position: 'absolute', top: 2, flexGrow: 1 }]}>
+          <FlatList showsHorizontalScrollIndicator={false} onScroll={changeView} pagingEnabled horizontal data={dataset} style={{zIndex: 100, width: '100%'}} renderItem={({item, index}) => {
+            return (
+              <ImageBackground source={{ uri: item?.img }} style={{ height: Dimensions.get('window').height, width: Dimensions.get('window').width, justifyContent: 'flex-end', flex: 1, backgroundColor: 'grey' }}>
+                
+              </ImageBackground>
+              )
+          }} />
+          <View style={{alignSelf: 'flex-end',position: 'absolute', zIndex: 100, bottom: 10, left: -5 }}>
+            <ScrollView horizontal style={{alignSelf: 'center'}}>
+            {dataset?.map((_, index) => {
+              return(
+              <View style={{alignSelf: 'center', flexDirection: 'row'}}>
+                <View style={{backgroundColor: selectedIndex === index ? '#fff' : 'grey', width: 5, height: 5, borderRadius: 5, marginHorizontal: 2}} />
+            </View>)
+            })}
+            </ScrollView>
+            
+          <View style={{ alignSelf: 'flex-end', margin: 15, flexDirection: 'row', }}>
+            
+                  <View>
+                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 25 }}>
+                      {dataset[selectedIndex].name}, 24
+                    </Text>
+                    <View style={{ alignSelf: 'flex-start', marginVertical: 12, flexDirection: 'row', alignItems:'center' }}>
+                      <Octicons name="location" size={15} color="#fff" />
+                      <Text style={{ color: '#fff', fontSize: 14, marginLeft: 5 }}>
+                        Paris
+                      </Text>
+    
+                    </View>
+                    <Text style={{ color: '#fff', fontSize: 13, maxWidth: '90%', textAlign: 'left' }}>
+                      Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                    </Text>
+    
+                  </View>
+                  <View>
+                    
+          <LinearGradient colors={['#fff', '#000', '#000', '#000','#fff' ]} end={{x: 0.5, y: 1}} style={{backgroundColor: '#fff', alignSelf: 'flex-start', width: 50, height: 50, borderRadius: 50, justifyContent: 'center', alignItems: 'center'}}>
+            <MaterialCommunityIcons name="heart" size={30} color="red" />
+          </LinearGradient>
+          <LinearGradient colors={['#fff', '#000', '#000', '#000','#fff' ]} end={{x: 0.5, y: 1}} style={{backgroundColor: '#fff', alignSelf: 'flex-start', width: 50, height: 50, borderRadius: 50, justifyContent: 'center', alignItems: 'center', marginVertical: 10}}>
+            <MaterialCommunityIcons name="email" size={30} color="#fff" />
+          </LinearGradient>
+                  </View>
+                </View></View>
 
-          <ImageBackground source={{ uri: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800' }} style={{ height: Dimensions.get('window').height, width: Dimensions.get('window').width, justifyContent: 'flex-end', flex: 1, backgroundColor: 'grey' }}>
-            <View style={{ alignSelf: 'flex-start', margin: 15, flexDirection: 'row' }}>
-              <View>
-
-                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 25 }}>
-                  Emily, 24
-                </Text>
-                <View style={{ alignSelf: 'flex-start', marginVertical: 12, flexDirection: 'row', alignItems:'center' }}>
-                  <Octicons name="location" size={15} color="#fff" />
-                  <Text style={{ color: '#fff', fontSize: 14, marginLeft: 5 }}>
-                    Paris
-                  </Text>
-
-                </View>
-                <Text style={{ color: '#fff', fontSize: 13, maxWidth: '90%', textAlign: 'left' }}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                </Text>
-
-              </View>
-              <View>
-              <LinearGradient colors={['#fff', '#000', '#000', '#000','#fff' ]} end={{x: 0.5, y: 1}} style={{backgroundColor: '#fff', alignSelf: 'flex-start', width: 50, height: 50, borderRadius: 50, justifyContent: 'center', alignItems: 'center'}}>
-                <MaterialCommunityIcons name="heart" size={30} color="red" />
-              </LinearGradient>
-              <LinearGradient colors={['#fff', '#000', '#000', '#000','#fff' ]} end={{x: 0.5, y: 1}} style={{backgroundColor: '#fff', alignSelf: 'flex-start', width: 50, height: 50, borderRadius: 50, justifyContent: 'center', alignItems: 'center', marginVertical: 10}}>
-                <MaterialCommunityIcons name="email" size={30} color="#fff" />
-              </LinearGradient></View>
-            </View>
-          </ImageBackground>
         </Animated.View>
       </LinearGradient>
     </View>
