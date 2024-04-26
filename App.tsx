@@ -68,19 +68,19 @@ const App = () => {
 
   useEffect(() => {
     if (!selected) {
-      Opacity.value = withTiming(0.9, { duration: 750 });
+      Opacity.value = withTiming(1, { duration: 1000 });
       Opacity2.value = withTiming(0.3);
       scale1.value = withTiming(1);
       scale2.value = withTiming(0);
-      zIndex1.value = withTiming(0, {duration: 500});
-      zIndex2.value = withTiming(1, {duration: 0});
+      zIndex1.value = withTiming(0);
+      zIndex2.value = withTiming(10, {duration: 50});
     } else {
+      Opacity2.value = withTiming(1, { duration: 1000 });
       Opacity.value = withTiming(0.3);
-      Opacity2.value = withTiming(0.9, { duration: 750 });
       scale1.value = withTiming(0);
       scale2.value = withTiming(1);
-      zIndex1.value = withTiming(1, {duration: 500});
-      zIndex2.value = withTiming(0, {duration: 0});
+      zIndex1.value = withTiming(10, {duration: 50});
+      zIndex2.value = withTiming(0);
     }
   }, [selected])
 
@@ -108,7 +108,7 @@ const App = () => {
       <LinearGradient colors={['#000d1a', '#000d1a', '#000d1a', '#000d1a', '#000d1a', '#000d1a', '#000d1a']} style={{
         flex: 1
       }} start={{ x: 0.5, y: 0.5 }} end={{ x: 0.5, y: 1 }}>
-        <View style={{ flexDirection: 'row', position: 'absolute', top: 20, zIndex: 1, alignItems: 'flex-end'}}>
+        <View style={{ flexDirection: 'row', position: 'absolute', top: 20, zIndex: 100, alignItems: 'flex-end'}}>
           <Animated.View style={[animatedStyle1, {
             borderRadius: 40, alignItems: 'center', justifyContent: 'center',
           }]}>
@@ -136,8 +136,8 @@ const App = () => {
             </LinearGradient>
           </Animated.View>
         </View>
-        {selected ? (
-          <Animated.View entering={FadeInDown} style={[{ marginTop: 50 }, animatedStyle]}>
+        {/* {selected ? ( */}
+          <Animated.View style={[{ paddingTop: 50, zIndex: selected ? 10 : -10, backgroundColor: '#262626', flex: 1 }, animatedStyle]}>
             <Text style={{ textAlign: 'center', color: '#fff', fontSize: 20, fontWeight: '800' }}>
               Club
             </Text>
@@ -151,11 +151,11 @@ const App = () => {
             <Text style={{ color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 15, marginLeft: 15 }}>
               Personnes recommandees
             </Text>
-            <FlatList showsVerticalScrollIndicator={false} renderItem={renderItem} numColumns={2} data={dataset} style={{ flexGrow: 1, marginBottom: 240, marginLeft: 10 }} />
+            <FlatList showsVerticalScrollIndicator={false} renderItem={renderItem} numColumns={2} data={dataset} style={{ flexGrow: 1, marginLeft: 10 }} />
           </Animated.View>
-        ) : <Animated.View entering={FadeInDown} style={[animatedStyle, { backgroundColor: 'grey', flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
+         <Animated.View entering={FadeInDown} style={[animatedStyle, { flex: 1, alignItems: 'center', justifyContent: 'center', zIndex: !selected ? 10 : -10, position: 'absolute', top: 2 }]}>
 
-          <ImageBackground source={{ uri: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800' }} style={{ height: Dimensions.get('window').height, width: Dimensions.get('window').width, justifyContent: 'flex-end' }}>
+          <ImageBackground source={{ uri: 'https://images.pexels.com/photos/2887774/pexels-photo-2887774.jpeg?auto=compress&cs=tinysrgb&w=800' }} style={{ height: Dimensions.get('window').height, width: Dimensions.get('window').width, justifyContent: 'flex-end', flex: 1, backgroundColor: 'grey' }}>
             <View style={{ alignSelf: 'flex-start', margin: 15, flexDirection: 'row' }}>
               <View>
 
@@ -183,7 +183,7 @@ const App = () => {
               </LinearGradient></View>
             </View>
           </ImageBackground>
-        </Animated.View>}
+        </Animated.View>
       </LinearGradient>
     </View>
   );
